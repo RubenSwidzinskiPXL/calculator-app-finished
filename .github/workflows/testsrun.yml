@@ -15,15 +15,11 @@ jobs:
           zip -r build/app.zip . \
             -x "*.git*" ".github/*" "build/*"
 
-      - run: npm install
-      - run: npm run build --if-present
-      - run: npm test
-
-      - name: Test Report
-        uses: dorny/test-reporter@v2
-        if: ${{ !cancelled() }}       # run this step even if previous step failed
+      - run: npm ci                       # install packages
+      - run: npm test                     # run tests (configured to use jest-junit reporter)
+      - uses: actions/upload-artifact@v4  # upload test results
+        if: ${{ !cancelled() }}           # run this step even if previous step failed
         with:
-          name: JEST Tests            # Name of the check run which will be created
-          path: reports/jest-*.xml    # Path to test results
-          reporter: jest-junit        # Format of test results
+          name: test-results
+          path: jest-junit.xml
   
