@@ -1,0 +1,16 @@
+name: Build Example
+on:
+  workflow_dispatch:
+
+jobs:
+  proefme:
+    runs-on: ubuntu-latest 
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v6.0.0
+      
+      - name: Create build zip
+        run: |
+          mkdir -p build
+          zip -r build/app.zip . \
+            -x "*.git*" ".github/*" "build/*"
