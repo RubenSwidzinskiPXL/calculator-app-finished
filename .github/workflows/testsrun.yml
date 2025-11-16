@@ -18,5 +18,7 @@ jobs:
       - run: npm install                       # install packages
       - run: npm test -- --coverage                     # run tests (configured to use jest-junit reporter)
       - uses: mridang/action-test-reporter@v1.3.0
+        with:
+          coverage-file: coverage/lcov.info
       
   
