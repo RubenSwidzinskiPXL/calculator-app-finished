@@ -1,4 +1,4 @@
-name: Docker Example
+name: Docker CI
 on:
   workflow_dispatch:   # Only manual trigger
 
@@ -29,7 +29,7 @@ jobs:
       - name: Login to Docker Hub
         uses: docker/login-action@v3
         with:
-          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          username: ${{ vars.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
       # Build and push Docker image with correct tags
