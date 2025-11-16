@@ -15,6 +15,6 @@ jobs:
           zip -r build/app.zip . \
             -x "*.git*" ".github/*" "build/*"
 
-      - run: npm ci
+      - run: npm install
       - run: npm run build --if-present
       - run: npm test
