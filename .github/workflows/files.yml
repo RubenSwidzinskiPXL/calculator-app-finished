@@ -3,13 +3,17 @@ name: Files
 on:
   workflow_dispatch
 
-steps:
-  - name: Make directory
-    run: mkdir -p Files
+jobs:
+  lab2:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Make directory
+        run: mkdir -p Files
 
-  - name: Make file
-    run: echo "testfile" > Files/file.txt
+      - name: Make file
+        run: echo "testfile" > Files/file.txt
 
-  - name: Show contents
-    run: ls -l my_directory 
+      - name: Show contents
+        run: ls -l my_directory
+ 
 
