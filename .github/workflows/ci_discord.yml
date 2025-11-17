@@ -1,0 +1,78 @@
+name: CI with Discord Notifications and PR Comments
+
+on:
+  push:
+    branches:
+      - main
+      - '**' # alle feature branches
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      # Voeg hier je build- en teststappen toe
+      - name: Run tests
+        run: |
+          npm install
+          npm test
+          # Voorbeeld output test coverage (vervang door eigen command)
+          echo "Test coverage: 85%"
+
+    outputs:
+      build_status: ${{ job.status }}
+
+  notify-discord:
+    needs: build
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main' || github.event_name == 'pull_request'
+    steps:
+      - name: Send Discord Notification - Push on main
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main' && needs.build.result == 'success'
+        uses: dawidd6/action-discord@v3
+        with:
+          webhook: ${{ secrets.DISCORD_WEBHOOK }}
+          message: |
+            🚀 Build Success on main branch!
+            Commit: ${{ github.sha }}
+            Status: Success
+
+      - name: Send Discord Notification - Push on main failed
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main' && needs.build.result != 'success'
+        uses: dawidd6/action-discord@v3
+        with:
+          webhook: ${{ secrets.DISCORD_WEBHOOK }}
+          message: |
+            ❌ Build FAILED on main branch!
+            Commit: ${{ github.sha }}
+            Status: Failure
+
+      - name: Send Discord Notification - PR open
+        if: github.event_name == 'pull_request' && github.event.action == 'opened'
+        uses: dawidd6/action-discord@v3
+        with:
+          webhook: ${{ secrets.DISCORD_WEBHOOK }}
+          message: |
+            📢 New PR #${{ github.event.pull_request.number }} opened by ${{ github.event.pull_request.user.login }}.
+
+      - name: PR Comment with build status and test coverage
+        if: github.event_name == 'pull_request' && (needs.build.result == 'success' || needs.build.result != 'success')
+        uses: peter-evans/create-or-update-comment@v3
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          issue-number: ${{ github.event.pull_request.number }}
+          body: |
+            Build status: **${{ needs.build.result }}**
+            Test coverage: 85% <!-- Vervang met dynamische waarde indien mogelijk -->
+# Toelichting:
+# Discord webhook URL zit in DISCORD_WEBHOOK secret.
+
+# Discord notificaties voor main branch en bij open PR events.
+
+# PR krijgt comment met build status en test coverage via peter-evans action.
+
+# Conditional if statements sturen verschillende berichten op basis van event type, branch en status.

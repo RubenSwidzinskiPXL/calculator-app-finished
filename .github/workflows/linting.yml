@@ -1,0 +1,42 @@
+name: CI with Code Quality Checks
+
+on:
+  push:
+    branches:
+      - main
+      - '**' # alle feature branches
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Install dependencies
+        run: npm install
+      - name: Run tests
+        run: npm test
+
+  code-quality:
+    runs-on: ubuntu-latest
+    needs: test
+    steps:
+      - uses: actions/checkout@v3
+      - name: Install dependencies
+        run: npm install
+      - name: Run ESLint
+        run: npm run lint
+      - name: Run Prettier format check
+        run: npm run format:check
+      - name: Run Security Audit
+        run: npm audit --audit-level=high
+# Toelichting:
+# Er zijn nu twee jobs test en code-quality die parallel draaien.
+
+# code-quality voert ESLint, Prettier en npm audit uit.
+
+# Workflow faalt als een van deze faalt omdat geen continue-on-error is ingesteld.
+
+# npm run lint en npm run format:check zijn commands vanuit package.json voor respectievelijk linting en code formatting controle.
