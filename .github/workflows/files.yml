@@ -14,6 +14,6 @@ jobs:
         run: echo "testfile" > Files/file.txt
 
       - name: Show contents
-        run: ls -l my_directory
+        run: ls -l Files
  
 
