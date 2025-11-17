@@ -13,7 +13,7 @@ on:
           - production
 
 jobs:
-  deploy:
+  deploy_now:
     runs-on: ubuntu-latest
     steps:
       - name: Step for production only
