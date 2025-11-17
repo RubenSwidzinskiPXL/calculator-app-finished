@@ -15,5 +15,8 @@ jobs:
 
       - name: Show contents
         run: ls -l Files
+
+      - name: Show content of file.txt
+        run: cat Files/file.txt
  
 
